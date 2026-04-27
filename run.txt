@@ -1,0 +1,26 @@
+@echo off
+setlocal
+set OUT_DIR=out
+if exist "%OUT_DIR%" rmdir /s /q "%OUT_DIR%"
+mkdir "%OUT_DIR%"
+
+dir /s /b src\main\java\*.java > sources.txt
+javac -d "%OUT_DIR%" @sources.txt
+if errorlevel 1 goto :err
+
+echo.
+echo === Demo ===
+java -cp "%OUT_DIR%" com.example.rate_limiter.RateLimiterApplication
+if errorlevel 1 goto :err
+
+echo.
+echo === Tests ===
+java -cp "%OUT_DIR%" com.example.rate_limiter.demo.SelfTestRunner
+if errorlevel 1 goto :err
+
+del sources.txt
+exit /b 0
+
+:err
+echo Build or execution failed.
+exit /b 1
